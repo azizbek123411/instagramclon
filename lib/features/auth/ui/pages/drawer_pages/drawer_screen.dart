@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:instagram_clon/features/auth/presentation/cubits/auth_cubit.dart';
-import 'package:instagram_clon/features/auth/presentation/widgets/drawer_tile.dart';
+
+
+import '../../../domain/cubits/auth_cubit.dart';
+import '../../widgets/drawer_tile.dart';
+import 'profile_page.dart';
 
 class DrawerScreen extends StatelessWidget {
   const DrawerScreen({super.key});
@@ -27,7 +30,9 @@ class DrawerScreen extends StatelessWidget {
               icon: Icons.home,
             ),
             DrawerTile(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProfilePage(),),);
+              },
               text: 'profile',
               icon: Icons.person,
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:instagram_clon/features/auth/presentation/pages/drawer_pages/drawer_screen.dart';
+
+import '../drawer_pages/drawer_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

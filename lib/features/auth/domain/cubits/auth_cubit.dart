@@ -1,7 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_clon/features/auth/domain/entities/app_user.dart';
 import 'package:instagram_clon/features/auth/domain/repo/auth_repo.dart';
-import 'package:instagram_clon/features/auth/presentation/cubits/auth_states.dart';
+
+import 'auth_states.dart';
 
 class AuthCubit extends Cubit<AuthStates> {
   final AuthRepo authRepo;

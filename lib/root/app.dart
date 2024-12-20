@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_clon/features/auth/data/firebase_auth.dart';
-import 'package:instagram_clon/features/auth/presentation/cubits/auth_cubit.dart';
-import 'package:instagram_clon/features/auth/presentation/cubits/auth_states.dart';
-import 'package:instagram_clon/features/auth/presentation/pages/home_page/home_page.dart';
-import 'package:instagram_clon/features/auth/presentation/pages/register_pages/sign_in_or_up.dart';
+
+import '../features/auth/domain/cubits/auth_cubit.dart';
+import '../features/auth/domain/cubits/auth_states.dart';
+import '../features/auth/ui/pages/home_page/home_page.dart';
+import '../features/auth/ui/pages/register_pages/sign_in_or_up.dart';
 
 class MyApp extends StatelessWidget {
   final authRepo = FirebaseAuthRepo();
