@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-import '../../../domain/cubits/auth_cubit.dart';
+import '../../../features/auth/domain/cubits/auth_cubit/auth_cubit.dart';
 import '../../widgets/drawer_tile.dart';
 import 'profile_page.dart';
 
@@ -31,7 +30,18 @@ class DrawerScreen extends StatelessWidget {
             ),
             DrawerTile(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProfilePage(),),);
+                Navigator.pop(context);
+
+                final userId = context.read<AuthCubit>().currentUser!.userId;
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(
+                      userId: userId,
+                    ),
+                  ),
+                );
               },
               text: 'profile',
               icon: Icons.person,

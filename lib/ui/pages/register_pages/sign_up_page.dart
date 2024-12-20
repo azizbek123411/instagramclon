@@ -1,33 +1,49 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_clon/utility/screen_utils.dart';
 
 import '../../../../../utility/app_padding.dart';
-import '../../../domain/cubits/auth_cubit.dart';
+import '../../../features/auth/domain/cubits/auth_cubit/auth_cubit.dart';
 import '../../widgets/buttons.dart';
 import '../../widgets/textfields.dart';
 
-class LoginPage extends StatefulWidget {
+class SignUpPage extends StatefulWidget {
   final void Function()? onTap;
 
-  const LoginPage({super.key, required this.onTap});
+  const SignUpPage({super.key, required this.onTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  void login() {
+  void register() {
+    final String name = nameController.text;
     final String email = emailController.text;
-    final String password = passwordController.text;
+    final String pw = passwordController.text;
+    final String confirmPW = confirmPasswordController.text;
 
     final authCubit = context.read<AuthCubit>();
 
-    if (email.isNotEmpty && password.isNotEmpty) {
-      authCubit.login(email, password);
+    if (name.isNotEmpty &&
+        email.isNotEmpty &&
+        pw.isNotEmpty &&
+        confirmPW.isNotEmpty) {
+      if (pw == confirmPW) {
+        authCubit.register(email, name, pw);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Passwords do not match'),
+          ),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -36,10 +52,13 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
+
   @override
   void dispose() {
-    emailController.dispose();
+    nameController.dispose();
+    emailController.selection;
     passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -55,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(
-                Icons.lock,
+                Icons.person,
                 color: Theme.of(context).colorScheme.primary,
                 size: 60,
               ),
@@ -63,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 15,
               ),
               Text(
-                "Welcome back!!",
+                "Create account",
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 20,
@@ -73,6 +92,13 @@ class _LoginPageState extends State<LoginPage> {
                 height: 30.h,
               ),
               TextFields(
+                hintText: 'Enter name',
+                controller: nameController,
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              TextFields(
                 hintText: 'Enter your email',
                 controller: emailController,
               ),
@@ -80,9 +106,15 @@ class _LoginPageState extends State<LoginPage> {
                 height: 10.h,
               ),
               TextFields(
-                obscure: true,
                 hintText: 'Enter your password',
                 controller: passwordController,
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              TextFields(
+                hintText: 'Confirm your password',
+                controller: confirmPasswordController,
               ),
               SizedBox(
                 height: 30.h,
@@ -91,15 +123,15 @@ class _LoginPageState extends State<LoginPage> {
                 color: Theme.of(context).colorScheme.primary,
                 h: 50.h,
                 w: double.infinity,
-                title: 'Login',
+                title: 'Sign Up',
                 r: 10,
-                onTap: login,
+                onTap: register,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'New user?',
+                    'Already a member?',
                     style: TextStyle(
                       color: Colors.black54,
                       fontSize: 15,
@@ -108,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                   TextButton(
                     onPressed: widget.onTap,
                     child: Text(
-                      'Sign Up',
+                      'Login',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 15,
