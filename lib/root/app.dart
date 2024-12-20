@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_clon/features/auth/data/firebase_auth.dart';
 import 'package:instagram_clon/features/auth/data/firebase_profile_repo.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/profile_cubit/profile_cubit.dart';
+import 'package:instagram_clon/storage/data/firebase_storage_repo.dart';
 
 import '../features/auth/domain/cubits/auth_cubit/auth_cubit.dart';
 import '../features/auth/domain/cubits/auth_cubit/auth_state.dart';
@@ -10,8 +11,9 @@ import '../ui/pages/home_page/home_page.dart';
 import '../ui/pages/register_pages/sign_in_or_up.dart';
 
 class MyApp extends StatelessWidget {
-  final authRepo = FirebaseAuthRepo();
-  final profileRepo = FirebaseProfileRepo();
+  final firebaseAuthRepo = FirebaseAuthRepo();
+  final firebaseProfileRepo = FirebaseProfileRepo();
+  final firebaseStorageRepo = FirebaseStorageRepo();
 
   MyApp({super.key});
 
@@ -20,11 +22,13 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthCubit>(
-          create: (context) => AuthCubit(authRepo: authRepo)..checkAuth(),
+          create: (context) =>
+              AuthCubit(authRepo: firebaseAuthRepo)..checkAuth(),
         ),
         BlocProvider<ProfileCubit>(
           create: (context) => ProfileCubit(
-            profileRepo: profileRepo,
+            profileRepo: firebaseProfileRepo,
+            storageRepo: firebaseStorageRepo,
           ),
         ),
       ],
