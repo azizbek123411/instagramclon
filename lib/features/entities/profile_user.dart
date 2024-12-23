@@ -1,4 +1,5 @@
-import 'package:instagram_clon/features/auth/domain/entities/app_user.dart';
+
+import 'app_user.dart';
 
 class ProfileUser extends AppUser {
   final String bio;

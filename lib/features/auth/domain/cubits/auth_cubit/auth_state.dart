@@ -1,4 +1,5 @@
-import 'package:instagram_clon/features/auth/domain/entities/app_user.dart';
+
+import '../../../../entities/app_user.dart';
 
 abstract class AuthStates {}
 

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:instagram_clon/features/auth/domain/entities/profile_user.dart';
 import 'package:instagram_clon/features/auth/domain/repo/profile_repo.dart';
+
+import '../../entities/profile_user.dart';
 
 class FirebaseProfileRepo implements ProfileRepo {
   final FirebaseFirestore firebaseFireStore = FirebaseFirestore.instance;

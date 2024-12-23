@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:instagram_clon/features/auth/domain/entities/app_user.dart';
 import 'package:instagram_clon/features/auth/domain/repo/auth_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../../entities/app_user.dart';
 
 class FirebaseAuthRepo implements AuthRepo {
   final firebaseAuth = FirebaseAuth.instance;

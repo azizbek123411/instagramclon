@@ -1,4 +1,4 @@
-import '../entities/profile_user.dart';
+import '../../../entities/profile_user.dart';
 
 abstract class ProfileRepo{
 Future<ProfileUser?> fetchUserProfile(String userId);

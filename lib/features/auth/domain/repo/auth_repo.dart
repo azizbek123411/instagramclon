@@ -1,4 +1,4 @@
-import '../entities/app_user.dart';
+import '../../../entities/app_user.dart';
 
 abstract class AuthRepo{
   Future<AppUser?> loginWithEmailPassword(String email, String password);

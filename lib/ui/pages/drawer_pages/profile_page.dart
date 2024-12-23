@@ -1,14 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/profile_cubit/profile_cubit.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/profile_cubit/profile_state.dart';
-import 'package:instagram_clon/features/auth/domain/entities/app_user.dart';
 import 'package:instagram_clon/ui/pages/drawer_pages/edit_profile_page.dart';
 import 'package:instagram_clon/ui/widgets/bio_box.dart';
 import 'package:instagram_clon/utility/app_padding.dart';
 import 'package:instagram_clon/utility/screen_utils.dart';
 
 import '../../../features/auth/domain/cubits/auth_cubit/auth_cubit.dart';
+import '../../../features/entities/app_user.dart';
 
 class ProfilePage extends StatefulWidget {
   final String userId;
@@ -45,11 +46,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EditProfilePage(user: user,),
+                      builder: (context) => EditProfilePage(
+                        user: user,
+                      ),
                     ),
                   );
                 },
-                icon: const Icon(Icons.settings),
+                icon: const Icon(Icons.edit),
               ),
             ],
           ),
@@ -68,12 +71,25 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(
                     height: 10.h,
                   ),
-                  CircleAvatar(
-                    radius: 40,
-                    foregroundColor: Theme.of(context).colorScheme.primary,
-                    child: const Icon(
+                  CachedNetworkImage(
+                    imageUrl: user.imagePathUrl,
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(
                       Icons.person,
-                      size: 50,
+                      size: 70,
+                    ),
+                    imageBuilder: (context, imageProvider) => Container(
+                      height: 120.h,
+                      width: 120.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+
                     ),
                   ),
                   SizedBox(
