@@ -22,7 +22,7 @@ class PostCubit extends Cubit<PostState> {
       if (imagePath != null) {
         emit(PostsUploading());
         imageUrl =
-            await storageRepo.uploadProfileImageMobile(imagePath, post.id);
+            await storageRepo.uploadPostImagesMobile(imagePath, post.id);
       }
 
       final newPost = post.copyWith(imageUrl: imageUrl);

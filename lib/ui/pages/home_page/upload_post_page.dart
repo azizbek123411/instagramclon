@@ -80,7 +80,6 @@ class _UploadPostPageState extends State<UploadPostPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<PostCubit, PostState>(
-
       builder: (context, state) {
         print(state);
         if (state is PostsLoading || state is PostsUploading) {
@@ -104,12 +103,14 @@ class _UploadPostPageState extends State<UploadPostPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(onPressed: uploadPost, icon: Icon(Icons.check))
+          IconButton(
+            onPressed: uploadPost,
+            icon: const Icon(Icons.check),
+          ),
         ],
         title: const Text('Create post'),
       ),
       body: Padding(
-
         padding: Dis.only(lr: 10.w),
         child: SingleChildScrollView(
           child: Column(

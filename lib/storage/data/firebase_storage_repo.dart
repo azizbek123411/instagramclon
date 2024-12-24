@@ -8,7 +8,11 @@ class FirebaseStorageRepo implements StorageRepo {
 
   @override
   Future<String?> uploadProfileImageMobile(String path, String fileName) {
-    return _uploadFile(path, fileName, 'profile_images',);
+    return _uploadFile(
+      path,
+      fileName,
+      'profile_images',
+    );
   }
 
   Future<String?> _uploadFile(
@@ -22,5 +26,10 @@ class FirebaseStorageRepo implements StorageRepo {
     } catch (e) {
       return null;
     }
+  }
+
+  @override
+  Future<String?> uploadPostImagesMobile(String path, String fileName) {
+   return _uploadFile(path, fileName, 'post_images');
   }
 }
