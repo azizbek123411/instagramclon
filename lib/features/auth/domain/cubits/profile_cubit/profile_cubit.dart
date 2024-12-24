@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/profile_cubit/profile_state.dart';
 import 'package:instagram_clon/features/auth/domain/repo/profile_repo.dart';
+import 'package:instagram_clon/features/entities/profile_user.dart';
 
 import '../../../../../storage/domain/storage_repo.dart';
 
@@ -26,6 +27,11 @@ class ProfileCubit extends Cubit<ProfileState> {
     } catch (e) {
       emit(ProfileError(message: e.toString()));
     }
+  }
+
+  Future<ProfileUser?>getUserProfile(String userId)async{
+  final user=await profileRepo.fetchUserProfile(userId);
+  return user;
   }
 
   Future<void> updateUserProfile({

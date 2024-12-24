@@ -1,10 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/post_cubit/post_cubit.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/post_cubit/post_state.dart';
 import 'package:instagram_clon/ui/widgets/post_tile.dart';
-import 'package:instagram_clon/utility/screen_utils.dart';
 
 import '../drawer_pages/drawer_screen.dart';
 import 'upload_post_page.dart';
@@ -25,6 +23,7 @@ class _HomePageState extends State<HomePage> {
 
   void deletePost(String postId) {
     postCubit.deletePost(postId);
+    fetchAllPosts();
   }
 
   @override
