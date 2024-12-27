@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:instagram_clon/features/entities/comment.dart';
 import 'package:instagram_clon/features/entities/post.dart';
-import 'package:instagram_clon/features/post/data/repo.dart';
+import 'package:instagram_clon/features/post/data/post_repo.dart';
 
 class FirebasePostRepo implements PostRepo {
   final fireStore = FirebaseFirestore.instance;
@@ -75,11 +76,47 @@ class FirebasePostRepo implements PostRepo {
         await postCollection.doc(postId).update({
           'likes': post.likes,
         });
-      }else{
+      } else {
         throw Exception('post not found');
       }
     } catch (e) {
       throw Exception('like error :$e');
+    }
+  }
+
+  @override
+  Future<void> addComment(String postId, Comment comment) async {
+    try {
+      final postDoc = await postCollection.doc(postId).get();
+      if (postDoc.exists) {
+        final post = Post.fromJson(postDoc.data() as Map<String, dynamic>);
+        post.comments.add(comment);
+        await postCollection.doc(postId).update({
+          'comments': post.comments.map((comment) => comment.toJson()).toList(),
+        });
+      } else {
+        throw Exception('Post not found');
+      }
+    } catch (e) {
+      throw Exception('post error:$e');
+    }
+  }
+
+  @override
+  Future<void> deleteComment(String postId, String commentId) async {
+    try {
+      final postDoc = await postCollection.doc(postId).get();
+      if (postDoc.exists) {
+        final post = Post.fromJson(postDoc.data() as Map<String, dynamic>);
+        post.comments.removeWhere((comment) => comment.id == commentId);
+        await postCollection.doc(postId).update({
+          'comments': post.comments.map((comment) => comment.toJson()).toList(),
+        });
+      } else {
+        throw Exception('Post not found');
+      }
+    } catch (e) {
+      throw Exception('post error:$e');
     }
   }
 }

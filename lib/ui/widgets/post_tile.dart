@@ -5,8 +5,10 @@ import 'package:instagram_clon/features/auth/domain/cubits/auth_cubit/auth_cubit
 import 'package:instagram_clon/features/auth/domain/cubits/post_cubit/post_cubit.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/profile_cubit/profile_cubit.dart';
 import 'package:instagram_clon/features/entities/app_user.dart';
+import 'package:instagram_clon/features/entities/comment.dart';
 import 'package:instagram_clon/features/entities/post.dart';
 import 'package:instagram_clon/features/entities/profile_user.dart';
+import 'package:instagram_clon/ui/widgets/textfields.dart';
 import 'package:instagram_clon/utility/app_padding.dart';
 import 'package:instagram_clon/utility/screen_utils.dart';
 
@@ -27,6 +29,7 @@ class PostTile extends StatefulWidget {
 class _PostTileState extends State<PostTile> {
   late final postCubit = context.read<PostCubit>();
   late final profileCubit = context.read<ProfileCubit>();
+  final commentController = TextEditingController();
 
   bool isOwnPost = false;
 
@@ -114,6 +117,57 @@ class _PostTileState extends State<PostTile> {
     });
   }
 
+  void openNewCommentBox() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: TextFields(
+          hintText: 'Type comment',
+          controller: commentController,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text(
+              "Cancel",
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              addComment();
+              Navigator.pop(context);
+            },
+            child: const Text(
+              "Save",
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void addComment() {
+    final newComment = Comment(
+      userId: widget.post.userId,
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      postId: widget.post.id,
+      text: commentController.text,
+      userName: widget.post.userName,
+      timeStamp: DateTime.now(),
+    );
+    if (commentController.text.isNotEmpty) {
+      postCubit.addComment(widget.post.id, newComment);
+    }
+  }
+
+  @override
+  void dispose() {
+    commentController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final postTime = widget.post.timStamp;
@@ -189,25 +243,46 @@ class _PostTileState extends State<PostTile> {
           ),
           Row(
             children: [
-              GestureDetector(
-                  onTap: toggleLikePost,
-                  child: Icon(
-                      widget.post.likes.contains(currentUser?.userId)
-                          ? Icons.favorite
-                          : Icons.favorite_outline,
-                      color: Colors.red)),
-              Text(widget.post.likes.length.toString()),
+              // GestureDetector(
+              //     onTap: toggleLikePost,
+              //     child: Icon(
+              //         widget.post.likes.contains(currentUser?.userId)
+              //             ? Icons.favorite
+              //             : Icons.favorite_outline,
+              //         color: Colors.red)),
+              // Text(widget.post.likes.length.toString()),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  openNewCommentBox();
+                },
                 icon: const Icon(
                   Icons.insert_comment_outlined,
+                  color: Colors.grey,
                 ),
               ),
-              const Text(
-                '0',
-                style: TextStyle(
+              Text(
+                widget.post.comments.length.toString(),
+                style: const TextStyle(
+                  color: Colors.grey,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                widget.post.userName,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                "  ${widget.post.text}",
+                style: const TextStyle(
+                  color: Colors.black54,
                 ),
               ),
             ],

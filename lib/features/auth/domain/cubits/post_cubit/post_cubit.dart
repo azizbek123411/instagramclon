@@ -1,7 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/post_cubit/post_state.dart';
+import 'package:instagram_clon/features/entities/comment.dart';
 import 'package:instagram_clon/features/entities/post.dart';
-import 'package:instagram_clon/features/post/data/repo.dart';
+import 'package:instagram_clon/features/post/data/post_repo.dart';
 import 'package:instagram_clon/storage/domain/storage_repo.dart';
 
 class PostCubit extends Cubit<PostState> {
@@ -58,6 +59,26 @@ class PostCubit extends Cubit<PostState> {
       fetchAllPosts();
     } catch (e) {
       emit(PostsError('like error:$e'));
+    }
+  }
+
+  Future<void> addComment(String postId, Comment comment) async {
+    try {
+      await postRepo.addComment(postId, comment);
+      await fetchAllPosts();
+    } catch (e) {
+      emit(
+        PostsError('failed to comment:$e'),
+      );
+    }
+  }
+
+  Future<void> deleteComment(String postId, String commentId) async {
+    try {
+      await postRepo.deleteComment(postId, commentId);
+      await fetchAllPosts();
+    } catch (e) {
+      emit(PostsError("Delete message error:$e"));
     }
   }
 }
