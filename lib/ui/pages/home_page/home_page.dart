@@ -71,15 +71,18 @@ class _HomePageState extends State<HomePage> {
                 itemCount: allPosts.length,
                 itemBuilder: (context, index) {
                   final post = allPosts[index];
-                  return PostTile(post: post, onTap: (){
-                    deletePost(post.id);
-                  },);
+                  return PostTile(
+                    post: post,
+                    onTap: () {
+                      deletePost(post.id);
+                    },
+                  );
                 });
           } else if (state is PostsError) {
             return Center(
               child: Text(state.message),
             );
-          }else{
+          } else {
             return const SizedBox();
           }
         },

@@ -59,4 +59,27 @@ class FirebasePostRepo implements PostRepo {
       throw Exception('Error:$e');
     }
   }
+
+  @override
+  Future<void> toggleLikePost(String postId, String userId) async {
+    try {
+      final postDoc = await postCollection.doc(postId).get();
+      if (postDoc.exists) {
+        final post = Post.fromJson(postDoc.data() as Map<String, dynamic>);
+        final hasLiked = post.likes.contains(userId);
+        if (hasLiked) {
+          post.likes.remove(userId);
+        } else {
+          post.likes.add(userId);
+        }
+        await postCollection.doc(postId).update({
+          'likes': post.likes,
+        });
+      }else{
+        throw Exception('post not found');
+      }
+    } catch (e) {
+      throw Exception('like error :$e');
+    }
+  }
 }

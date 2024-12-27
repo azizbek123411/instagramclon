@@ -21,8 +21,7 @@ class PostCubit extends Cubit<PostState> {
     try {
       if (imagePath != null) {
         emit(PostsUploading());
-        imageUrl =
-            await storageRepo.uploadPostImagesMobile(imagePath, post.id);
+        imageUrl = await storageRepo.uploadPostImagesMobile(imagePath, post.id);
       }
 
       final newPost = post.copyWith(imageUrl: imageUrl);
@@ -51,5 +50,14 @@ class PostCubit extends Cubit<PostState> {
     try {
       await postRepo.deletePost(postId);
     } catch (e) {}
+  }
+
+  Future<void> toggleLikePost(String postId, String userId) async {
+    try {
+      await postRepo.toggleLikePost(postId, userId);
+      fetchAllPosts();
+    } catch (e) {
+      emit(PostsError('like error:$e'));
+    }
   }
 }

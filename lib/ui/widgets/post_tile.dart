@@ -82,8 +82,41 @@ class _PostTileState extends State<PostTile> {
         });
   }
 
+  void toggleLikePost() {
+    final isLiked = widget.post.likes.contains(currentUser!.userId);
+
+    setState(() {
+      if (isLiked) {
+        widget.post.likes.remove(currentUser!.userId);
+      } else {
+        widget.post.likes.add(currentUser!.userId);
+      }
+    });
+
+    postCubit
+        .toggleLikePost(
+      widget.post.id,
+      currentUser!.userId,
+    )
+        .catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error),
+        ),
+      );
+      setState(() {
+        if (isLiked) {
+          widget.post.likes.remove(currentUser!.userId);
+        } else {
+          widget.post.likes.add(currentUser!.userId);
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final postTime = widget.post.timStamp;
     return Container(
       padding: Dis.only(
         lr: 10.w,
@@ -96,8 +129,8 @@ class _PostTileState extends State<PostTile> {
               postUser!.imagePathUrl != null
                   ? CachedNetworkImage(
                       imageBuilder: (context, imageProvider) => Container(
-                        height: 40.h,
-                        width: 40.w,
+                        height: 30.h,
+                        width: 30.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
@@ -120,9 +153,12 @@ class _PostTileState extends State<PostTile> {
               Text(
                 widget.post.userName,
                 style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 30,
-                ),
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "    ${postTime.hour}:${postTime.minute}  ${postTime.day}/${postTime.month}/${postTime.year}",
               ),
               const Spacer(),
               if (isOwnPost)
@@ -150,6 +186,31 @@ class _PostTileState extends State<PostTile> {
               ),
               errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
+          ),
+          Row(
+            children: [
+              GestureDetector(
+                  onTap: toggleLikePost,
+                  child: Icon(
+                      widget.post.likes.contains(currentUser?.userId)
+                          ? Icons.favorite
+                          : Icons.favorite_outline,
+                      color: Colors.red)),
+              Text(widget.post.likes.length.toString()),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.insert_comment_outlined,
+                ),
+              ),
+              const Text(
+                '0',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
           Text(
             widget.post.text,
