@@ -1,13 +1,18 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/auth_cubit/auth_cubit.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/post_cubit/post_cubit.dart';
+import 'package:instagram_clon/features/auth/domain/cubits/post_cubit/post_state.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/profile_cubit/profile_cubit.dart';
 import 'package:instagram_clon/features/entities/app_user.dart';
 import 'package:instagram_clon/features/entities/comment.dart';
 import 'package:instagram_clon/features/entities/post.dart';
 import 'package:instagram_clon/features/entities/profile_user.dart';
+import 'package:instagram_clon/ui/pages/drawer_pages/profile_page.dart';
+import 'package:instagram_clon/ui/widgets/comment_tile.dart';
 import 'package:instagram_clon/ui/widgets/textfields.dart';
 import 'package:instagram_clon/utility/app_padding.dart';
 import 'package:instagram_clon/utility/screen_utils.dart';
@@ -86,20 +91,20 @@ class _PostTileState extends State<PostTile> {
   }
 
   void toggleLikePost() {
-    final isLiked = widget.post.likes.contains(currentUser!.userId);
+    final isLiked = widget.post.likes.contains(currentUser?.userId ?? "hello");
 
     setState(() {
       if (isLiked) {
-        widget.post.likes.remove(currentUser!.userId);
+        widget.post.likes.remove(currentUser?.userId ?? "hello");
       } else {
-        widget.post.likes.add(currentUser!.userId);
+        widget.post.likes.add(currentUser?.userId ?? "hello");
       }
     });
 
     postCubit
         .toggleLikePost(
       widget.post.id,
-      currentUser!.userId,
+      currentUser?.userId ?? "hello",
     )
         .catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -150,11 +155,11 @@ class _PostTileState extends State<PostTile> {
 
   void addComment() {
     final newComment = Comment(
-      userId: widget.post.userId,
+      userId: currentUser?.userId ?? 'hello',
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       postId: widget.post.id,
       text: commentController.text,
-      userName: widget.post.userName,
+      userName: currentUser?.name ?? "hello",
       timeStamp: DateTime.now(),
     );
     if (commentController.text.isNotEmpty) {
@@ -178,52 +183,64 @@ class _PostTileState extends State<PostTile> {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              postUser!.imagePathUrl != null
-                  ? CachedNetworkImage(
-                      imageBuilder: (context, imageProvider) => Container(
-                        height: 30.h,
-                        width: 30.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      imageUrl: postUser!.imagePathUrl,
-                      errorWidget: (context, url, error) => const Icon(
-                        Icons.person,
-                      ),
-                    )
-                  : const Icon(
-                      Icons.person,
-                    ),
-              SizedBox(
-                width: 10.w,
-              ),
-              Text(
-                widget.post.userName,
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "    ${postTime.hour}:${postTime.minute}  ${postTime.day}/${postTime.month}/${postTime.year}",
-              ),
-              const Spacer(),
-              if (isOwnPost)
-                IconButton(
-                  onPressed: showOptions,
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Colors.red,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(
+                    userId: widget.post.userId,
                   ),
                 ),
-            ],
+              );
+            },
+            child: Row(
+              children: [
+                postUser?.imagePathUrl != null
+                    ? CachedNetworkImage(
+                        imageBuilder: (context, imageProvider) => Container(
+                          height: 30.h,
+                          width: 30.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        imageUrl: postUser!.imagePathUrl,
+                        errorWidget: (context, url, error) => const Icon(
+                          Icons.person,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.person,
+                      ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                Text(
+                  widget.post.userName,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "    ${postTime.hour}:${postTime.minute}  ${postTime.day}/${postTime.month}/${postTime.year}",
+                ),
+                const Spacer(),
+                if (isOwnPost)
+                  IconButton(
+                    onPressed: showOptions,
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                  ),
+              ],
+            ),
           ),
           SizedBox(
             height: 8.h,
@@ -243,16 +260,17 @@ class _PostTileState extends State<PostTile> {
           ),
           Row(
             children: [
-              // GestureDetector(
-              //     onTap: toggleLikePost,
-              //     child: Icon(
-              //         widget.post.likes.contains(currentUser?.userId)
-              //             ? Icons.favorite
-              //             : Icons.favorite_outline,
-              //         color: Colors.red)),
-              // Text(widget.post.likes.length.toString()),
+              GestureDetector(
+                  onTap: toggleLikePost,
+                  child: Icon(
+                      widget.post.likes.contains(currentUser?.userId ?? 'hello')
+                          ? Icons.favorite
+                          : Icons.favorite_outline,
+                      color: Colors.red)),
+              Text(widget.post.likes.length.toString()),
               IconButton(
                 onPressed: () {
+                   print('currentUser: $currentUser');
                   openNewCommentBox();
                 },
                 icon: const Icon(
@@ -275,6 +293,7 @@ class _PostTileState extends State<PostTile> {
               Text(
                 widget.post.userName,
                 style: const TextStyle(
+                  fontSize: 18,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
@@ -282,18 +301,41 @@ class _PostTileState extends State<PostTile> {
               Text(
                 "  ${widget.post.text}",
                 style: const TextStyle(
-                  color: Colors.black54,
+                  fontSize: 18,
+                  color: Colors.black,
                 ),
               ),
             ],
           ),
-          Text(
-            widget.post.text,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 30,
-            ),
-          ),
+          BlocBuilder<PostCubit, PostState>(builder: (context, state) {
+            if (state is PostsLoaded) {
+              final post =
+                  state.posts.firstWhere((post) => (post.id == widget.post.id));
+              if (post.comments.isNotEmpty) {
+                int showCommentCount = post.comments.length;
+
+                return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: showCommentCount,
+                    itemBuilder: (context, index) {
+                      final comment = post.comments[index];
+                      return CommentTile(comment: comment);
+                    });
+              }
+            }
+            if (state is PostsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is PostsError) {
+              return Center(
+                child: Text(
+                  state.message,
+                ),
+              );
+            } else {
+              return SizedBox();
+            }
+          })
         ],
       ),
     );

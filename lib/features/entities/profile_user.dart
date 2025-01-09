@@ -4,6 +4,8 @@ import 'app_user.dart';
 class ProfileUser extends AppUser {
   final String bio;
   final String imagePathUrl;
+  final List<String> followers;
+  final List<String> following;
 
   ProfileUser({
     required this.bio,
@@ -11,11 +13,15 @@ class ProfileUser extends AppUser {
     required super.email,
     required super.name,
     required super.userId,
+    required this.followers,
+    required this.following
   });
 
   ProfileUser copyWith({
     String? newBio,
     String? newProfileImageUrl,
+    List<String>? newFollowers,
+    List<String>? newFollowing,
   }) {
     return ProfileUser(
       bio: newBio ?? bio,
@@ -23,9 +29,12 @@ class ProfileUser extends AppUser {
       email: email,
       name: name,
       userId: userId,
+      followers: newFollowers??followers,
+      following: newFollowing??following
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'bio': bio,
@@ -33,6 +42,8 @@ class ProfileUser extends AppUser {
       'email': email,
       'name': name,
       'userId': userId,
+      'followers':followers,
+      'following':following,
     };
   }
 
@@ -43,6 +54,8 @@ class ProfileUser extends AppUser {
       email: json['email'],
       name: json['name'],
       userId: json['userId'],
+      followers: List<String>.from(json['followers']??[]),
+      following: List<String>.from(json['following']??[]),
     );
   }
 }

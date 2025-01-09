@@ -29,9 +29,9 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<ProfileUser?>getUserProfile(String userId)async{
-  final user=await profileRepo.fetchUserProfile(userId);
-  return user;
+  Future<ProfileUser?> getUserProfile(String userId) async {
+    final user = await profileRepo.fetchUserProfile(userId);
+    return user;
   }
 
   Future<void> updateUserProfile({
@@ -75,6 +75,17 @@ class ProfileCubit extends Cubit<ProfileState> {
       await fetchUserProfile(userId);
     } catch (e) {
       emit(ProfileError(message: "Error:$e"));
+    }
+  }
+
+  Future<void> toggleFollow(String currentUserId, String targetUserId) async {
+    try {
+      await profileRepo.toggleFollow(currentUserId, targetUserId);
+      await fetchUserProfile(targetUserId);
+    } catch (e) {
+      emit(
+        ProfileError(message: "Follow error:$e"),
+      );
     }
   }
 }

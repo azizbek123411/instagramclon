@@ -61,7 +61,7 @@ class Post {
       imageUrl: json['imageUrl'],
       userName: json['userName'],
       likes: List<String>.from(json['likes'] ?? []),
-      comments: comments,
+      comments: comments
     );
   }
 }

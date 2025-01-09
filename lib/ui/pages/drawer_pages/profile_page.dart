@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:instagram_clon/features/auth/domain/cubits/post_cubit/post_cubit.dart';
+import 'package:instagram_clon/features/auth/domain/cubits/post_cubit/post_state.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/profile_cubit/profile_cubit.dart';
 import 'package:instagram_clon/features/auth/domain/cubits/profile_cubit/profile_state.dart';
 import 'package:instagram_clon/ui/pages/drawer_pages/edit_profile_page.dart';
 import 'package:instagram_clon/ui/widgets/bio_box.dart';
+import 'package:instagram_clon/ui/widgets/post_tile.dart';
 import 'package:instagram_clon/utility/app_padding.dart';
 import 'package:instagram_clon/utility/screen_utils.dart';
 
@@ -25,6 +28,8 @@ class _ProfilePageState extends State<ProfilePage> {
   late final profileCubit = context.read<ProfileCubit>();
 
   late AppUser? currentUser = authCubit.currentUser;
+
+  int postCount = 0;
 
   @override
   void initState() {
@@ -61,8 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: SizedBox(
               width: double.infinity,
               height: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: ListView(
                 children: [
                   SizedBox(
                     height: 20.h,
@@ -89,7 +93,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           fit: BoxFit.cover,
                         ),
                       ),
-
                     ),
                   ),
                   SizedBox(
@@ -109,7 +112,35 @@ class _ProfilePageState extends State<ProfilePage> {
                   const Text(
                     'Posts',
                     style: TextStyle(fontSize: 20),
-                  )
+                  ),
+                  BlocBuilder<PostCubit,PostState>(builder: (context, state) {
+                    if (state is PostsLoaded) {
+                      final usersPost = state.posts
+                          .where((post) => post.userId == widget.userId)
+                          .toList();
+                      postCount = usersPost.length;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                          itemCount: postCount,
+                          itemBuilder: (context, index) {
+                            final post = usersPost[index];
+                            return PostTile(
+                                post: post,
+                                onTap: () {
+                                  context.read<PostCubit>().deletePost(post.id);
+                                });
+                          });
+                    } else if (state is PostsLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      return Center(
+                        child: Text('No posts!'),
+                      );
+                    }
+                  })
                 ],
               ),
             ),
